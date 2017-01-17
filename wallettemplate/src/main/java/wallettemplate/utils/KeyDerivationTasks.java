@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package wallettemplate.utils;
 
 import org.bitcoinj.crypto.KeyCrypterScrypt;
@@ -27,13 +26,16 @@ import org.spongycastle.crypto.params.KeyParameter;
 import javax.annotation.*;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import org.bitcoinj.crypto.KeyCrypterException;
 
 import static wallettemplate.utils.GuiUtils.checkGuiThread;
 
 /**
- * Background tasks for pumping a progress meter and deriving an AES key using scrypt.
+ * Background tasks for pumping a progress meter and deriving an AES key using
+ * scrypt.
  */
 public class KeyDerivationTasks {
+
     private static final Logger log = LoggerFactory.getLogger(KeyDerivationTasks.class);
 
     public final Task<KeyParameter> keyDerivationTask;
@@ -54,7 +56,7 @@ public class KeyDerivationTasks {
                     timeTakenMsec = (int) (System.currentTimeMillis() - start);
                     log.info("Key derivation done in {}ms", timeTakenMsec);
                     return result;
-                } catch (Throwable e) {
+                } catch (KeyCrypterException e) {
                     log.error("Exception during key derivation", e);
                     throw e;
                 }

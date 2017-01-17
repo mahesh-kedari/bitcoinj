@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package wallettemplate.utils;
 
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.wallet.Wallet;
-import org.bitcoinj.wallet.listeners.AbstractWalletEventListener;
 import org.bitcoinj.wallet.listeners.WalletChangeEventListener;
 import org.bitcoinj.core.*;
 import javafx.application.Platform;
@@ -33,25 +31,26 @@ import java.util.Date;
  * A class that exposes relevant bitcoin stuff as JavaFX bindable properties.
  */
 public class BitcoinUIModel {
+
     private SimpleObjectProperty<Address> address = new SimpleObjectProperty<>();
     private SimpleObjectProperty<Coin> balance = new SimpleObjectProperty<>(Coin.ZERO);
     private SimpleDoubleProperty syncProgress = new SimpleDoubleProperty(-1);
     private ProgressBarUpdater syncProgressUpdater = new ProgressBarUpdater();
 
     public BitcoinUIModel() {
+        address = new SimpleObjectProperty<>();
+        balance = new SimpleObjectProperty<>(Coin.ZERO);
+        syncProgress = new SimpleDoubleProperty(-1);
+        syncProgressUpdater = new ProgressBarUpdater();
     }
 
     public BitcoinUIModel(Wallet wallet) {
+        this();
         setWallet(wallet);
     }
 
     public final void setWallet(Wallet wallet) {
-        wallet.addChangeEventListener(Platform::runLater, new WalletChangeEventListener() {
-            @Override
-            public void onWalletChanged(Wallet wallet) {
-                update(wallet);
-            }
-        });
+        wallet.addChangeEventListener(Platform::runLater, this::update);
         update(wallet);
     }
 
@@ -61,6 +60,7 @@ public class BitcoinUIModel {
     }
 
     private class ProgressBarUpdater extends DownloadProgressTracker {
+
         @Override
         protected void progress(double pct, int blocksLeft, Date date) {
             super.progress(pct, blocksLeft, date);
@@ -74,9 +74,13 @@ public class BitcoinUIModel {
         }
     }
 
-    public DownloadProgressTracker getDownloadProgressTracker() { return syncProgressUpdater; }
+    public DownloadProgressTracker getDownloadProgressTracker() {
+        return syncProgressUpdater;
+    }
 
-    public ReadOnlyDoubleProperty syncProgressProperty() { return syncProgress; }
+    public ReadOnlyDoubleProperty syncProgressProperty() {
+        return syncProgress;
+    }
 
     public ReadOnlyObjectProperty<Address> addressProperty() {
         return address;

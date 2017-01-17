@@ -173,6 +173,8 @@ public class GuiUtils {
     /**
      * A useful helper for development purposes. Used as a switch for loading files from local disk, allowing live
      * editing whilst the app runs without rebuilds.
+     * @param name
+     * @return 
      */
     public static URL getResource(String name) {
         if (false)
